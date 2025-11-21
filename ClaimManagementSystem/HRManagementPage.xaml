@@ -33,17 +33,23 @@
                         </StackPanel>
                     </Grid>
 
+                    <!-- NEW: Download Report Button -->
+                    <Button x:Name="btnDownloadReport" Content="Download Report as CSV" 
+                            Click="BtnDownloadReport_Click" Margin="0,10,0,0"
+                            Background="#e67e22" Foreground="White" Padding="15,8"
+                            IsEnabled="False"/>
+
                     <Button Content="Export All Approved Claims to CSV" 
                             Click="BtnExportClaims_Click" Margin="0,10,0,0"
                             Background="#27ae60" Foreground="White" Padding="15,8"/>
                 </StackPanel>
             </GroupBox>
 
-            <!-- Lecturer Management -->
+            <!-- Rest of your existing XAML remains the same -->
             <GroupBox Header="Lecturer Management" Margin="0,0,0,20">
                 <StackPanel Margin="10">
                     <DataGrid x:Name="dgLecturers" AutoGenerateColumns="False" 
-                             Height="200" Margin="0,0,0,10">
+                             Height="120" Margin="0,0,0,10">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Name" Binding="{Binding FullName}" Width="*"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
@@ -66,7 +72,7 @@
             <GroupBox Header="Payment Processing">
                 <StackPanel Margin="10">
                     <DataGrid x:Name="dgApprovedClaims" AutoGenerateColumns="False" 
-                             Height="150" Margin="0,0,0,10">
+                             Height="98" Margin="0,0,0,10">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Lecturer" Binding="{Binding UserEmail}" Width="200"/>
                             <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>

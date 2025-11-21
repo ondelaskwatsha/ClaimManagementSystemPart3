@@ -25,26 +25,40 @@ namespace ClaimManagementSystem
         public void NavigateAfterLogin(User user)
         {
             CurrentUser = user;
+
+            // DEBUG: Show user info
+            Console.WriteLine($"=== NAVIGATING AFTER LOGIN ===");
+            Console.WriteLine($"User: {user.FullName}");
+            Console.WriteLine($"Role: {user.Role}");
+            Console.WriteLine($"Email: {user.Email}");
+
             UpdateNavigationVisibility(true);
 
             // Role-based navigation and access control
             switch (user.Role)
             {
                 case UserRole.Lecturer:
+                    Console.WriteLine("Navigating to LECTURER view");
                     MainFrame.Navigate(new SubmitClaimPage());
                     btnManageClaims.Visibility = Visibility.Collapsed;
                     btnHRManagement.Visibility = Visibility.Collapsed;
                     break;
                 case UserRole.ProgramCoordinator:
                 case UserRole.AcademicManager:
+                    Console.WriteLine("Navigating to COORDINATOR/MANAGER view");
                     MainFrame.Navigate(new ManageClaimsPage(user.Role));
                     btnHRManagement.Visibility = Visibility.Collapsed;
                     break;
                 case UserRole.HRManager:
+                    Console.WriteLine("Navigating to HR MANAGER view");
                     MainFrame.Navigate(new HRManagementPage());
                     btnSubmitClaim.Visibility = Visibility.Collapsed;
                     btnMyClaims.Visibility = Visibility.Collapsed;
                     btnManageClaims.Visibility = Visibility.Collapsed;
+                    break;
+                default:
+                    Console.WriteLine("Unknown role, defaulting to lecturer view");
+                    MainFrame.Navigate(new SubmitClaimPage());
                     break;
             }
 

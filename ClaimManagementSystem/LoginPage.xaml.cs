@@ -11,11 +11,13 @@ namespace ClaimManagementSystem
     public partial class LoginPage : Page
     {
         private readonly MainWindow mainWindow;
-
         public LoginPage(MainWindow window)
         {
             InitializeComponent();
             mainWindow = window;
+
+            // Sync data between UserStore and DataService
+            SyncUserData();
 
             // Show debug info
             ShowDebugInfo();
@@ -26,18 +28,50 @@ namespace ClaimManagementSystem
 
         private void ShowDebugInfo()
         {
-            // This will show us what users are available
             string debugInfo = UserStore.GetDebugInfo();
-            Console.WriteLine("=== LOGIN PAGE DEBUG INFO ===");
-            Console.WriteLine(debugInfo);
+            Console.WriteLine("=== ALL USERS ===");
+            foreach (var user in UserStore.GetUsers())
+            {
+                Console.WriteLine($"{user.Email} - {user.Role} - Active: {user.IsActive}");
+            }
             Console.WriteLine("=== END DEBUG INFO ===");
         }
 
+        private void SyncUserData()
+        {
+            try
+            {
+                Console.WriteLine("=== SYNCING USER DATA ===");
+                var dataService = new DataService();
+                var userStoreUsers = UserStore.GetUsers();
+
+                foreach (var user in userStoreUsers)
+                {
+                    Console.WriteLine($"Checking user: {user.Email} - {user.Role}");
+
+                    // Check if user exists in DataService
+                    var dsUser = dataService.GetUserByEmail(user.Email);
+                    if (dsUser == null)
+                    {
+                        Console.WriteLine($"Adding {user.Email} to DataService");
+                        dataService.AddUser(user);
+                    }
+                }
+                Console.WriteLine("=== SYNC COMPLETE ===");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Sync error: {ex.Message}");
+            }
+        }
         private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
             string email = txtEmail.Text.Trim();
             string password = txtPassword.Password;
 
+            Console.WriteLine($"=== LOGIN ATTEMPT: {email} ===");
+
+            // Validate inputs
             if (string.IsNullOrEmpty(email))
             {
                 MessageBox.Show("Please enter your email address.", "Login Failed",
@@ -52,39 +86,122 @@ namespace ClaimManagementSystem
                 return;
             }
 
-            // SIMPLE TEST: Try the exact credentials we know should work
-            if (email == "admin@university.com" && password == "admin123")
+            // TEMPORARY: Try multiple authentication sources
+            User authenticatedUser = null;
+
+            // 1. Try default hardcoded users first
+            authenticatedUser = TryDefaultUsers(email, password);
+
+            // 2. If not found, try UserStore
+            if (authenticatedUser == null)
             {
-                var user = UserStore.GetUserByEmail("admin@university.com");
-                if (user != null)
+                authenticatedUser = UserStore.GetUserByEmail(email);
+                if (authenticatedUser != null && authenticatedUser.Password == password)
                 {
-                    LoginSuccess(user);
-                    return;
+                    Console.WriteLine($"Authenticated via UserStore: {authenticatedUser.FullName}");
                 }
-            }
-            else if (email == "lecturer@university.com" && password == "lecturer123")
-            {
-                var user = UserStore.GetUserByEmail("lecturer@university.com");
-                if (user != null)
+                else
                 {
-                    LoginSuccess(user);
-                    return;
+                    authenticatedUser = null;
                 }
             }
 
-            // Normal authentication
-            var authUser = AuthenticateUser(email, password);
-            if (authUser != null)
+            // 3. If still not found, try DataService
+            if (authenticatedUser == null)
             {
-                LoginSuccess(authUser);
+                var dataService = new DataService();
+                authenticatedUser = dataService.GetUserByEmail(email);
+                if (authenticatedUser != null && authenticatedUser.Password == password)
+                {
+                    Console.WriteLine($"Authenticated via DataService: {authenticatedUser.FullName}");
+                }
+                else
+                {
+                    authenticatedUser = null;
+                }
+            }
+
+            if (authenticatedUser != null)
+            {
+                LoginSuccess(authenticatedUser);
             }
             else
             {
-                // Show detailed error message
-                string debugInfo = UserStore.GetDebugInfo();
-                MessageBox.Show($"Login failed. Please check your credentials.\n\nDebug Info:\n{debugInfo}",
-                              "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Login failed for: {email}\n\nPlease try one of these test accounts:\n\n" +
+                               "HR Manager: hr@university.com / hr123\n" +
+                               "Admin: admin@university.com / admin123\n" +
+                               "Lecturer: lecturer@university.com / lecturer123",
+                               "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void CleanUpUserData()
+        {
+            try
+            {
+                Console.WriteLine("=== CLEANING UP USER DATA ===");
+
+                // Get current users and remove duplicates
+                var currentUsers = UserStore.GetUsers();
+                var uniqueUsers = currentUsers
+                    .GroupBy(u => u.Email.ToLower())
+                    .Select(g => g.First())
+                    .ToList();
+
+                Console.WriteLine($"Before cleanup: {currentUsers.Count} users");
+                Console.WriteLine($"After cleanup: {uniqueUsers.Count} users");
+
+                // Save the cleaned list back to UserStore
+                // Since UserStore doesn't have a clear method, we'll recreate the file
+                var dataFilePath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "ClaimManagementSystem", "users.json");
+
+                if (File.Exists(dataFilePath))
+                {
+                    File.Delete(dataFilePath);
+                    Console.WriteLine("Deleted corrupted users file");
+                }
+
+                // Recreate with default users
+                UserStore.GetUsers(); // This will trigger recreation of default users
+
+                Console.WriteLine("=== CLEANUP COMPLETE ===");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Cleanup error: {ex.Message}");
+            }
+        }
+
+        private User TryDefaultUsers(string email, string password)
+        {
+            var defaultUsers = new[]
+            {
+        new { Email = "hr@university.com", Password = "hr123", Name = "HR Manager", Role = UserRole.HRManager },
+        new { Email = "admin@university.com", Password = "admin123", Name = "Admin User", Role = UserRole.AcademicManager },
+        new { Email = "lecturer@university.com", Password = "lecturer123", Name = "John Lecturer", Role = UserRole.Lecturer },
+        new { Email = "coordinator@university.com", Password = "coord123", Name = "Sarah Coordinator", Role = UserRole.ProgramCoordinator }
+    };
+
+            var match = defaultUsers.FirstOrDefault(u =>
+                u.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
+                u.Password == password);
+
+            if (match != null)
+            {
+                return new User
+                {
+                    Email = match.Email,
+                    FullName = match.Name,
+                    Password = match.Password,
+                    Role = match.Role,
+                    Department = match.Role == UserRole.HRManager ? "HR" : "Computer Science",
+                    IsActive = true
+                };
+            }
+
+            return null;
         }
 
         private void LoginSuccess(User user)
@@ -100,11 +217,34 @@ namespace ClaimManagementSystem
 
         private User AuthenticateUser(string email, string password)
         {
-            var user = UserStore.GetUserByEmail(email);
-            if (user != null && user.Password == password)
+            Console.WriteLine($"=== AUTHENTICATING: {email} ===");
+
+            // Try UserStore first
+            var userStoreUser = UserStore.GetUserByEmail(email);
+            if (userStoreUser != null && userStoreUser.Password == password && userStoreUser.IsActive)
             {
-                return user;
+                Console.WriteLine($"Found in UserStore: {userStoreUser.FullName} - {userStoreUser.Role}");
+                return userStoreUser;
             }
+
+            // Try DataService as backup
+            var dataService = new DataService();
+            var dataServiceUser = dataService.GetUserByEmail(email);
+            if (dataServiceUser != null && dataServiceUser.Password == password && dataServiceUser.IsActive)
+            {
+                Console.WriteLine($"Found in DataService: {dataServiceUser.FullName} - {dataServiceUser.Role}");
+
+                // Ensure this user exists in UserStore too
+                if (userStoreUser == null)
+                {
+                    Console.WriteLine($"Adding user to UserStore: {dataServiceUser.Email}");
+                    UserStore.AddUser(dataServiceUser);
+                }
+
+                return dataServiceUser;
+            }
+
+            Console.WriteLine($"User not found or invalid credentials: {email}");
             return null;
         }
 
@@ -124,6 +264,7 @@ namespace ClaimManagementSystem
                 // Silently fail
             }
         }
+
 
         private void AutoFillLastLogin()
         {

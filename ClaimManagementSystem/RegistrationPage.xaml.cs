@@ -19,6 +19,15 @@ namespace ClaimManagementSystem
 
         private void BtnCreateAccount_Click(object sender, RoutedEventArgs e)
         {
+            UserRole role = cmbRole.SelectedIndex switch
+            {
+                1 => UserRole.Lecturer,
+                2 => UserRole.ProgramCoordinator,
+                3 => UserRole.AcademicManager,
+                4 => UserRole.HRManager, // ADD THIS CASE
+                _ => throw new InvalidOperationException("Please select a valid role")
+            };
+
             if (ValidateRegistration())
             {
                 try

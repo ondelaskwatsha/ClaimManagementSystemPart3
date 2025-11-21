@@ -39,6 +39,7 @@
                             <ComboBoxItem Content="Lecturer"/>
                             <ComboBoxItem Content="Program Coordinator"/>
                             <ComboBoxItem Content="Academic Manager"/>
+                            <ComboBoxItem Content="HR Manager"/>
                         </ComboBox>
 
                         <!-- Department -->
