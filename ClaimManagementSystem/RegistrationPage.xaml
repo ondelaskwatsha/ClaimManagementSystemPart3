@@ -1,0 +1,91 @@
+﻿<Page x:Class="ClaimManagementSystem.RegisterPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Create Account">
+    <Grid Background="GhostWhite">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20" MaxWidth="500" HorizontalAlignment="Center">
+                <TextBlock Text="Create Account" FontSize="28" FontWeight="Bold" 
+                          HorizontalAlignment="Center" Margin="0,0,0,30" Height="35"/>
+                <TextBlock Text=" Claim Management System" 
+                          HorizontalAlignment="Center" Foreground="Maroon" Margin="0,0,0,30"/>
+                <Border Background="Maroon" BorderBrush="#ddd" BorderThickness="1" 
+                        Padding="30" CornerRadius="5" Height="600" RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleX="0.168"/>
+                            <RotateTransform/>
+                            <TranslateTransform X="-0.898"/>
+                        </TransformGroup>
+                    </Border.RenderTransform>
+                    <StackPanel>
+                        <!-- Full Name -->
+                        <TextBlock Text="Full Name" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBox x:Name="txtFullName" Padding="10" 
+                                Text="Enter your full name" 
+                                GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Width="441"/>
+
+                        <!-- Email -->
+                        <TextBlock Text="Email" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                        <TextBox x:Name="txtEmail" Padding="10" 
+                                Text="Enter your email" 
+                                GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+
+                        <!-- Role -->
+                        <TextBlock Text="Role" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                        <ComboBox x:Name="cmbRole" Padding="10" SelectedIndex="0">
+                            <ComboBoxItem Content="Select your role"/>
+                            <ComboBoxItem Content="Lecturer"/>
+                            <ComboBoxItem Content="Program Coordinator"/>
+                            <ComboBoxItem Content="Academic Manager"/>
+                        </ComboBox>
+
+                        <!-- Department -->
+                        <TextBlock Text="Department" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                        <ComboBox x:Name="cmbDepartment" Padding="10" SelectedIndex="0">
+                            <ComboBoxItem Content="Select your Department"/>
+                            <ComboBoxItem Content="Computer Science"/>
+                            <ComboBoxItem Content="Mathematics"/>
+                            <ComboBoxItem Content="Physics"/>
+                            <ComboBoxItem Content="Administration"/>
+                            <ComboBoxItem Content="HR"/>
+                        </ComboBox>
+
+                        <!-- Password -->
+                        <TextBlock Text="Password" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                        <PasswordBox x:Name="txtPassword" Padding="10"/>
+
+                        <!-- Confirm Password -->
+                        <TextBlock Text="Confirm Password" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                        <PasswordBox x:Name="txtConfirmPassword" Padding="10" Width="572"/>
+
+                        <!-- Create Account Button -->
+                        <Button Content="Create Account" Click="BtnCreateAccount_Click" 
+                                Background="#3498db" Foreground="White" FontWeight="Bold"
+                                Padding="15,12" Margin="0,30,0,20"/>
+
+                        <!-- Already have account -->
+                        <TextBlock Text="Already have an account? Sign in" 
+                                  HorizontalAlignment="Center" Foreground="White"
+                                  MouseDown="TextBlock_SignIn_MouseDown">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="#3498db"/>
+                                            <Setter Property="TextDecorations" Value="Underline"/>
+                                            <Setter Property="Cursor" Value="Hand"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- Registration Form -->
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

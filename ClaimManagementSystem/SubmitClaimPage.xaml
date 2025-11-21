@@ -1,0 +1,74 @@
+﻿<!-- SubmitClaimPage.xaml - COMPLETE FIXED VERSION -->
+<Page x:Class="ClaimManagementSystem.SubmitClaimPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Submit Claim"
+      Loaded="Page_Loaded">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="20" MaxWidth="800">
+            <TextBlock Text="Submit New Claim" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Column -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Claim Title *" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <TextBox x:Name="txtTitle" Padding="10" TextChanged="txtTitle_TextChanged"/>
+
+                    <TextBlock Text="Month &amp; Year *" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <DatePicker x:Name="dpMonthYear" Padding="10" DisplayDateStart="01/01/2020"/>
+
+                    <TextBlock Text="Description" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <TextBox x:Name="txtDescription" Padding="10" Height="80" TextWrapping="Wrap" 
+                            VerticalScrollBarVisibility="Auto"/>
+                </StackPanel>
+
+                <!-- Right Column -->
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Hours Worked *" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <TextBox x:Name="txtHours" Padding="10" Text="0" TextChanged="txtHours_TextChanged"/>
+
+                    <TextBlock Text="Hourly Rate (R) *" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <TextBox x:Name="txtHourlyRate" Padding="10" TextChanged="txtHourlyRate_TextChanged"/>
+
+                    <TextBlock Text="Total Amount" FontWeight="SemiBold" Margin="0,10,0,5"/>
+                    <TextBox x:Name="txtTotalAmount" Padding="10" Text="R0.00" IsReadOnly="True" 
+                            Background="#f8f9fa" FontWeight="Bold" Foreground="#2c3e50"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Supporting Documents -->
+            <TextBlock Text="Supporting Documents" FontWeight="SemiBold" Margin="0,20,0,5"/>
+            <Border BorderBrush="#ddd" BorderThickness="1" Background="#f8f9fa"
+                    Padding="40" Margin="0,0,0,20" CornerRadius="5">
+                <StackPanel HorizontalAlignment="Center">
+                    <TextBlock Text="Drop files here or click to upload"
+                              HorizontalAlignment="Center" FontSize="16" Margin="0,0,0,10"/>
+                    <TextBlock Text="Support for .pdf, .doc, .docx, .jpg, .jpeg, .png files up to 10MB each"
+                              HorizontalAlignment="Center" Foreground="#666" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <Button x:Name="btnChooseFiles" Content="Choose Files" Padding="15,8" Margin="0,10,0,0" 
+                            Click="BtnChooseFiles_Click" Background="#3498db" Foreground="White"/>
+                    <ListBox x:Name="lstFiles" Margin="0,10,0,0" Width="300" Height="80"
+                            HorizontalAlignment="Center" Background="White" BorderBrush="#ccc" BorderThickness="1"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Action Buttons -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="btnSaveDraft" Content="Save as Draft" Click="BtnSaveDraft_Click" 
+                        Background="#95a5a6" Foreground="White" FontWeight="Bold"
+                        Padding="20,10" Margin="0,0,10,0"/>
+                <Button x:Name="btnSubmitClaim" Content="Submit Claim" Click="BtnSubmitClaim_Click" 
+                        Background="#27ae60" Foreground="White" FontWeight="Bold"
+                        Padding="20,10"/>
+            </StackPanel>
+
+            <TextBlock Text="* Required fields" Foreground="#666" FontStyle="Italic" Margin="0,10,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
