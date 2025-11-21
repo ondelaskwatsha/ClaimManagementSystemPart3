@@ -2,10 +2,6 @@
 
 #  Rosebank College - Contract Monthly Claim System
 
-
-![PART 3 Background](https://github.com/user-attachments/assets/d5bb50b2-1645-4fe5-b195-68c85151eb8a)
-
-
 Description
 The Contract Monthly Claim System (CMCS) is a .NET-based web application designed to streamline the process of submitting, verifying, and approving claims by lecturers. This system supports multiple roles, including Lecturers, Programme Coordinators, and Academic Managers. The UI is implemented using WPF (.NET Core) as a front-end prototype and follows the Model View Controller (MVC) design pattern.
 
