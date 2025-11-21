@@ -13,3 +13,6 @@ Future Improvements
 Add backend functionality to make the system fully operational.
 Implement role-based authentication using ASP.NET Identity.
 Enhance error handling and validation to improve user experience.
+
+![PART 3 Background](https://github.com/user-attachments/assets/a047fb0b-9482-49e3-a3ee-a174aeeb988f)
+
